@@ -14,6 +14,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { useEffect, useRef } from "react";
 import gsap from "gsap";
+import { useMediaQuery } from "@/hooks/use-media-query";
 
 export function HomeCarousel({
 	items,
@@ -28,80 +29,113 @@ export function HomeCarousel({
 	const plugin = React.useRef(
 		Autoplay({ delay: 5000, stopOnInteraction: true })
 	);
-	const carouselRef = useRef(null);
+	const carouselRef = useRef<HTMLDivElement>(null);
+	const isMobile = useMediaQuery("(max-width: 768px)");
 
 	useEffect(() => {
+		if (!carouselRef.current) return;
+
 		const ctx = gsap.context(() => {
-			gsap.from(carouselRef.current, {
-				opacity: 0,
+			// Initial fade in of carousel
+			gsap.to(carouselRef.current, {
+				opacity: 1,
 				duration: 1,
-				ease: "power3.out",
+				ease: "power2.out",
 			});
 
-			const tl = gsap.timeline({ repeat: -1 });
-
-			items.forEach((_, index) => {
-				tl.to(`.carousel-item-${index} .carousel-content`, {
-					opacity: 1,
-					y: 0,
-					duration: 1,
-					ease: "power3.out",
-				}).to(
-					`.carousel-item-${index} .carousel-content`,
-					{
-						opacity: 0,
-						y: 50,
-						duration: 1,
-						ease: "power3.in",
-					},
-					"+=4"
-				);
+			// Set up slide content animations
+			const slides = document.querySelectorAll(".carousel-content");
+			slides.forEach((slide) => {
+				gsap.set(slide, { opacity: 0, y: 30 });
 			});
+
+			// Create observer for each slide
+			const observer = new IntersectionObserver(
+				(entries) => {
+					entries.forEach((entry) => {
+						if (entry.isIntersecting) {
+							// Slide in animation when visible
+							gsap.to(entry.target, {
+								opacity: 1,
+								y: 0,
+								duration: 0.8,
+								ease: "power3.out",
+							});
+						} else {
+							// Reset when not visible
+							gsap.set(entry.target, {
+								opacity: 0,
+								y: 30,
+							});
+						}
+					});
+				},
+				{
+					threshold: 0.5,
+				}
+			);
+
+			// Observe all slides
+			slides.forEach((slide) => observer.observe(slide));
+
+			return () => observer.disconnect();
 		});
 
 		return () => ctx.revert();
-	}, [items]);
+	}, []);
 
 	return (
 		<Carousel
 			ref={carouselRef}
 			dir="ltr"
 			plugins={[plugin.current]}
-			className="w-full mx-auto relative overflow-hidden rounded-xl shadow-2xl"
+			className="w-full mx-auto relative overflow-hidden opacity-0"
 			onMouseEnter={plugin.current.stop}
 			onMouseLeave={plugin.current.reset}
 		>
 			<CarouselContent>
-				{items.map((item, index) => (
-					<CarouselItem key={item.title} className={`carousel-item-${index}`}>
+				{items.map((item) => (
+					<CarouselItem key={item.title}>
 						<Link href={item.url}>
-							<div className="flex aspect-[16/6] items-center justify-center p-6 relative">
-								<Image
-									src={item.image || "/placeholder.svg"}
-									alt={item.title}
-									fill
-									className="object-cover"
-									priority
-								/>
-								<div className="absolute inset-0 bg-gradient-to-r from-black/50 to-transparent" />
-								<div className="carousel-content absolute w-full md:w-1/2 left-8 md:left-16 top-1/2 transform text-white opacity-0 translate-y-8">
-									<h2 className="text-2xl md:text-5xl lg:text-6xl font-bold mb-4 leading-tight">
-										{item.title}
-									</h2>
-									<Button
-										className="hidden md:inline-flex bg-primary hover:bg-primary/90 text-primary-foreground transition-all duration-300 transform hover:scale-105"
-										size="lg"
-									>
-										{item.buttonCaption}
-									</Button>
+							<div className="relative">
+								{/* Mobile-optimized container */}
+								<div className="flex aspect-[3/4] sm:aspect-[16/9] md:aspect-[16/6] items-center justify-center relative">
+									<Image
+										src={item.image || "/placeholder.svg"}
+										alt={item.title}
+										fill
+										className="object-cover"
+										priority
+									/>
+									{/* Enhanced gradient overlay */}
+									<div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/50 to-transparent" />
+
+									{/* Content container with improved mobile spacing */}
+									<div className="carousel-content absolute w-full px-6 sm:px-8 md:px-16 py-8 sm:py-12 md:py-0 md:w-1/2 left-0 top-1/2 transform -translate-y-1/2">
+										<div className="space-y-4 sm:space-y-6">
+											<h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold leading-tight text-white">
+												{item.title}
+											</h2>
+											<Button
+												className="bg-primary hover:bg-primary/90 text-primary-foreground transition-all duration-300 transform hover:scale-105 shadow-lg"
+												size={isMobile ? "default" : "lg"}
+											>
+												{item.buttonCaption}
+											</Button>
+										</div>
+									</div>
 								</div>
 							</div>
 						</Link>
 					</CarouselItem>
 				))}
 			</CarouselContent>
-			<CarouselPrevious className="left-4 md:left-8 bg-white/10 hover:bg-white/20 text-white border-none" />
-			<CarouselNext className="right-4 md:right-8 bg-white/10 hover:bg-white/20 text-white border-none" />
+
+			{/* Navigation buttons with improved mobile positioning */}
+			<div className="hidden sm:block">
+				<CarouselPrevious className="left-4 md:left-8 bg-white/10 hover:bg-white/20 text-white border-none backdrop-blur-sm" />
+				<CarouselNext className="right-4 md:right-8 bg-white/10 hover:bg-white/20 text-white border-none backdrop-blur-sm" />
+			</div>
 		</Carousel>
 	);
 }

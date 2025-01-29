@@ -96,4 +96,18 @@ body {
 	.nav-item:hover::after {
 		@apply w-full;
 	}
+
+	.carousel-title {
+		background-image: linear-gradient(
+			to right,
+			theme("colors.white") 20%,
+			theme("colors.primary.DEFAULT") 40%,
+			theme("colors.accent.DEFAULT") 60%,
+			theme("colors.white") 80%
+		);
+		background-size: 200% auto;
+		background-clip: text;
+		-webkit-background-clip: text;
+		-webkit-text-fill-color: transparent;
+	}
 }
