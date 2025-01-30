@@ -22,6 +22,7 @@ export default async function HomePage() {
 		limit: 4,
 	});
 	const todaysDeals = await getProductsByTag({ tag: "todays-deal" });
+	const bestSellingProducts = await getProductsByTag({ tag: "best-seller" });
 	const cards = [
 		{
 			title: "Categories to explore",
@@ -66,6 +67,7 @@ export default async function HomePage() {
 			carouselItems={data.carousels}
 			cards={cards}
 			todaysDeals={todaysDeals}
+			bestSellingProducts={bestSellingProducts}
 		/>
 	);
 }

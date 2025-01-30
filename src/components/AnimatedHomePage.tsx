@@ -34,12 +34,14 @@ interface AnimatedHomePageProps {
 	carouselItems: CarouselItem[];
 	cards: CardItem[];
 	todaysDeals: IProduct[];
+	bestSellingProducts: IProduct[];
 }
 
 export default function AnimatedHomePage({
 	carouselItems,
 	cards,
 	todaysDeals,
+	bestSellingProducts,
 }: AnimatedHomePageProps) {
 	const carouselRef = useRef<HTMLDivElement>(null);
 	const cardsRef = useRef<HTMLDivElement>(null);
@@ -98,6 +100,15 @@ export default function AnimatedHomePage({
 			<Card className="w-full rounded-none">
 				<CardContent className="p-4 items-center gap-3">
 					<ProductSlider title={"Today's Deals"} products={todaysDeals} />
+				</CardContent>
+			</Card>
+			<Card className="w-full rounded-none">
+				<CardContent className="p-4 items-center gap-3">
+					<ProductSlider
+						title="Best Selling Products"
+						products={bestSellingProducts}
+						hideDetails
+					/>
 				</CardContent>
 			</Card>
 		</div>
