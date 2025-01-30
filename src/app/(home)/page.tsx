@@ -1,5 +1,6 @@
 import {
 	getAllCategories,
+	getProductsByTag,
 	getProductsForCard,
 } from "@/lib/actions/product.action";
 import data from "@/lib/data";
@@ -20,6 +21,7 @@ export default async function HomePage() {
 		tag: "best-seller",
 		limit: 4,
 	});
+	const todaysDeals = await getProductsByTag({ tag: "todays-deal" });
 	const cards = [
 		{
 			title: "Categories to explore",
@@ -59,5 +61,11 @@ export default async function HomePage() {
 		},
 	];
 
-	return <AnimatedHomePage carouselItems={data.carousels} cards={cards} />;
+	return (
+		<AnimatedHomePage
+			carouselItems={data.carousels}
+			cards={cards}
+			todaysDeals={todaysDeals}
+		/>
+	);
 }

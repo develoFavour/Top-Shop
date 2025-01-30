@@ -5,6 +5,10 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { HomeCard } from "@/components/shared/home/home-card";
 import { HomeCarousel } from "@/components/shared/home/home-carousel";
+import { Card, CardContent } from "./ui/card";
+import ProductSlider from "./product/product-slider";
+import { IProduct } from "@/lib/db/models/product.model";
+// import { getProductsByTag } from "@/lib/actions/product.action";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -29,11 +33,13 @@ interface CardItem {
 interface AnimatedHomePageProps {
 	carouselItems: CarouselItem[];
 	cards: CardItem[];
+	todaysDeals: IProduct[];
 }
 
 export default function AnimatedHomePage({
 	carouselItems,
 	cards,
+	todaysDeals,
 }: AnimatedHomePageProps) {
 	const carouselRef = useRef<HTMLDivElement>(null);
 	const cardsRef = useRef<HTMLDivElement>(null);
@@ -89,6 +95,11 @@ export default function AnimatedHomePage({
 			>
 				<HomeCard cards={cards} />
 			</div>
+			<Card className="w-full rounded-none">
+				<CardContent className="p-4 items-center gap-3">
+					<ProductSlider title={"Today's Deals"} products={todaysDeals} />
+				</CardContent>
+			</Card>
 		</div>
 	);
 }

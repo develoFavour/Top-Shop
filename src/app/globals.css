@@ -110,6 +110,9 @@ body {
 		-webkit-background-clip: text;
 		-webkit-text-fill-color: transparent;
 	}
+	.h2-bold {
+		@apply font-bold text-lg lg:text-xl;
+	}
 }
 
 /* Locomotive Scroll styles */
