@@ -68,7 +68,7 @@ export default function Header() {
 							className="flex items-center header-button font-extrabold text-2xl"
 						>
 							<Image
-								src="/icon/logo.svg"
+								src="/logo.svg"
 								width={40}
 								height={40}
 								alt={`${APP_NAME} logo`}
