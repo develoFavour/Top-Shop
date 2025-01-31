@@ -50,22 +50,22 @@ export default async function ProductDetails(props: {
 
 	return (
 		<Suspense fallback={<ProductDetailsLoading />}>
-			<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+			<div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-8">
 				<section className="bg-white rounded-lg shadow-sm">
-					<div className="grid grid-cols-1 md:grid-cols-5 gap-8">
-						{/* Product Gallery */}
-						<div className="col-span-2">
+					<div className="grid grid-cols-1 lg:grid-cols-5 gap-4 lg:gap-8">
+						{/* Product Gallery - Full width on mobile, 2 columns on desktop */}
+						<div className="w-full lg:col-span-2 p-4">
 							<ProductGallery images={product.images} />
 						</div>
 
 						{/* Product Information */}
-						<div className="flex w-full flex-col gap-6 md:p-6 col-span-2">
+						<div className="w-full lg:col-span-2 p-4 lg:p-6 space-y-6">
 							<div className="space-y-4">
 								<div className="flex flex-wrap gap-2">
-									<Badge variant="secondary" className="text-sm">
+									<Badge variant="secondary" className="text-xs sm:text-sm">
 										{product.brand}
 									</Badge>
-									<Badge variant="outline" className="text-sm">
+									<Badge variant="outline" className="text-xs sm:text-sm">
 										{product.category}
 									</Badge>
 									{product.tags.map((tag) => (
@@ -73,7 +73,7 @@ export default async function ProductDetails(props: {
 											key={tag}
 											variant="secondary"
 											className={cn(
-												"text-sm",
+												"text-xs sm:text-sm",
 												tag === "todays-deal" && "bg-red-100 text-red-800"
 											)}
 										>
@@ -82,17 +82,15 @@ export default async function ProductDetails(props: {
 									))}
 								</div>
 
-								<h1 className="text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl">
+								<h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900">
 									{product.name}
 								</h1>
 
-								<div className="flex items-center gap-4">
-									<div className="flex items-center">
-										<Rating rating={product.avgRating} showNumber size={5} />
-										<span className="ml-2 text-sm text-gray-500">
-											({product.numReviews} reviews)
-										</span>
-									</div>
+								<div className="flex items-center gap-2">
+									<Rating rating={product.avgRating} showNumber size={4} />
+									<span className="text-sm text-gray-500">
+										({product.numReviews} reviews)
+									</span>
 								</div>
 
 								<Separator />
@@ -102,7 +100,7 @@ export default async function ProductDetails(props: {
 									listPrice={product.listPrice}
 									isDeal={product.tags.includes("todays-deal")}
 									forListing={false}
-									className="text-2xl"
+									className="text-xl sm:text-2xl"
 								/>
 							</div>
 
@@ -118,10 +116,10 @@ export default async function ProductDetails(props: {
 						</div>
 
 						{/* Purchase Card */}
-						<div className="col-span-1">
+						<div className="w-full lg:col-span-1 p-4">
 							<Card className="sticky top-4">
-								<CardContent className="p-6 space-y-4">
-									<ProductPrice price={product.price} className="text-3xl" />
+								<CardContent className="p-4 space-y-4">
+									<ProductPrice price={product.price} className="text-2xl" />
 
 									<div className="space-y-2">
 										{product.countInStock > 0 ? (
@@ -149,7 +147,7 @@ export default async function ProductDetails(props: {
 					</div>
 				</section>
 
-				<section className="mt-10">
+				<section className="mt-8">
 					<ProductSlider
 						products={relatedProducts.data}
 						title={`Best Sellers in ${product.category}`}

@@ -8,13 +8,15 @@ import { Button } from "@/components/ui/button";
 import { MenuIcon } from "lucide-react";
 import data from "@/lib/data";
 import Search from "./search";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
+import { cn } from "@/lib/utils";
 
 export default function Header() {
 	const headerRef = useRef(null);
 	const searchRef = useRef(null);
 	const menuRef = useRef(null);
+	const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
 	useEffect(() => {
 		const ctx = gsap.context(() => {
@@ -61,54 +63,86 @@ export default function Header() {
 	return (
 		<header ref={headerRef} className="glass-effect sticky top-0 z-50">
 			<div className="px-4 py-2 max-w-7xl mx-auto">
-				<div className="flex items-center justify-between">
-					<div className="flex items-center">
-						<Link
-							href="/"
-							className="flex items-center header-button font-extrabold text-2xl"
-						>
-							<Image
-								src="/logo.svg"
-								width={40}
-								height={40}
-								alt={`${APP_NAME} logo`}
-								className="mr-2"
-							/>
-							<span className="bg-clip-text text-transparent bg-gradient-to-r from-primary to-purple-600">
-								{APP_NAME}
-							</span>
-						</Link>
-					</div>
-					<div ref={searchRef} className="hidden md:block flex-1 max-w-xl px-4">
+				<div className="flex items-center justify-between gap-4">
+					{/* Logo */}
+					<Link
+						href="/"
+						className="flex items-center header-button font-extrabold text-lg sm:text-2xl flex-shrink-0"
+					>
+						<Image
+							src="/logo.svg"
+							width={32}
+							height={32}
+							alt={`${APP_NAME} logo`}
+							className="mr-2 sm:w-10 sm:h-10"
+						/>
+						<span className="bg-clip-text text-transparent bg-gradient-to-r from-primary to-purple-600">
+							{APP_NAME}
+						</span>
+					</Link>
+
+					{/* Desktop Search */}
+					<div ref={searchRef} className="hidden md:block flex-1 max-w-xl">
 						<Search />
 					</div>
-					<div ref={menuRef}>
+
+					{/* Menu */}
+					<div ref={menuRef} className="flex-shrink-0">
 						<Menu />
 					</div>
 				</div>
-				<div className="md:hidden block py-2">
+
+				{/* Mobile Search */}
+				<div className="md:hidden mt-2">
 					<Search />
 				</div>
 			</div>
+
+			{/* Navigation */}
 			<nav className="bg-secondary/50 backdrop-blur-lg">
-				<div className="flex items-center px-4 py-2 max-w-7xl mx-auto overflow-x-auto">
-					<Button
-						variant="ghost"
-						className="header-button flex items-center gap-1 text-base [&_svg]:size-6"
-					>
-						<MenuIcon />
-						All
-					</Button>
-					<div className="flex items-center gap-4">
-						{data.headerMenus.map((menu) => (
-							<Link
-								href={menu.href}
-								key={menu.href}
-								className="nav-item px-3 py-2 text-sm font-medium"
-							>
-								{menu.name}
-							</Link>
-						))}
+				<div className="relative max-w-7xl mx-auto">
+					<div className="flex items-center px-4 py-2">
+						<Button
+							variant="ghost"
+							className="header-button flex items-center gap-1 text-sm sm:text-base mr-4 flex-shrink-0"
+							onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+						>
+							<MenuIcon className="h-5 w-5 sm:h-6 sm:w-6" />
+							<span className="hidden xs:inline">All</span>
+						</Button>
+
+						{/* Desktop Menu */}
+						<div className="hidden sm:flex items-center gap-4 overflow-x-auto no-scrollbar">
+							{data.headerMenus.map((menu) => (
+								<Link
+									href={menu.href}
+									key={menu.href}
+									className="nav-item whitespace-nowrap px-3 py-2 text-sm font-medium hover:text-primary transition-colors"
+								>
+									{menu.name}
+								</Link>
+							))}
+						</div>
+
+						{/* Mobile Menu */}
+						<div
+							className={cn(
+								"absolute left-0 right-0 top-full bg-background/95 backdrop-blur-lg sm:hidden",
+								isMobileMenuOpen ? "block" : "hidden"
+							)}
+						>
+							<div className="px-4 py-2 flex flex-col gap-2">
+								{data.headerMenus.map((menu) => (
+									<Link
+										href={menu.href}
+										key={menu.href}
+										className="nav-item px-3 py-2 text-sm font-medium hover:bg-secondary/50 rounded-md transition-colors"
+									>
+										{menu.name}
+									</Link>
+								))}
+							</div>
+						</div>
 					</div>
 				</div>
 			</nav>

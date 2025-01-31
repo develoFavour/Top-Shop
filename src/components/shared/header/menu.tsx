@@ -1,8 +1,7 @@
 "use client";
 
-import { ShoppingCartIcon } from "lucide-react";
+import { ShoppingCartIcon, UserIcon } from "lucide-react";
 import Link from "next/link";
-// import { Button } from "@/components/ui/button";
 import { useEffect, useRef } from "react";
 import gsap from "gsap";
 
@@ -10,7 +9,6 @@ export default function Menu() {
 	const cartCountRef = useRef(null);
 
 	useEffect(() => {
-		// Animate cart count when it changes
 		gsap.from(cartCountRef.current, {
 			scale: 0,
 			duration: 0.3,
@@ -19,29 +17,41 @@ export default function Menu() {
 	}, []);
 
 	return (
-		<div className="flex justify-end">
-			<nav className="flex gap-4 w-full items-center">
-				<Link
-					href="/signin"
-					className="header-button bg-primary/5 hover:bg-primary/10"
-				>
-					<span className="text-sm font-medium">Hello, Sign in</span>
-				</Link>
-				<Link href="/cart" className="header-button relative group">
-					<div className="flex items-center gap-2">
-						<div className="relative">
-							<ShoppingCartIcon className="h-6 w-6" />
-							<span
-								ref={cartCountRef}
-								className="absolute -top-2 -right-2 bg-primary text-white text-xs rounded-full w-5 h-5 flex items-center justify-center"
-							>
-								0
-							</span>
-						</div>
-						<span className="text-sm font-medium">Cart</span>
+		<nav className="flex items-center">
+			<Link
+				href="/signin"
+				className="header-button bg-primary/5 hover:bg-primary/10 hidden sm:flex items-center gap-1"
+			>
+				<UserIcon className="h-4 w-4 sm:h-5 sm:w-5" />
+				<span className="text-xs sm:text-sm font-medium">Sign in</span>
+			</Link>
+			<Link
+				href="/signin"
+				className="header-button bg-primary/5 hover:bg-primary/10 sm:hidden"
+				aria-label="Sign in"
+			>
+				<UserIcon className="h-5 w-5" />
+			</Link>
+			<Link
+				href="/cart"
+				className="header-button relative group ml-1 sm:ml-2"
+				aria-label="Cart"
+			>
+				<div className="flex items-center">
+					<div className="relative">
+						<ShoppingCartIcon className="h-5 w-5 sm:h-6 sm:w-6" />
+						<span
+							ref={cartCountRef}
+							className="absolute -top-1 -right-1 bg-primary text-white text-[10px] sm:text-xs rounded-full w-3 h-3 sm:w-4 sm:h-4 flex items-center justify-center"
+						>
+							0
+						</span>
 					</div>
-				</Link>
-			</nav>
-		</div>
+					<span className="text-xs sm:text-sm font-medium hidden sm:inline ml-1">
+						Cart
+					</span>
+				</div>
+			</Link>
+		</nav>
 	);
 }
