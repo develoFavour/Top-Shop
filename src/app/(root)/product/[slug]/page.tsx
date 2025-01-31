@@ -15,6 +15,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import ProductDetailsLoading from "./loading";
+import BrowsingHistoryList from "@/components/shared/browsing-history-list";
 
 export async function generateMetadata(props: {
 	params: Promise<{ slug: string }>;
@@ -152,6 +153,9 @@ export default async function ProductDetails(props: {
 						products={relatedProducts.data}
 						title={`Best Sellers in ${product.category}`}
 					/>
+				</section>
+				<section>
+					<BrowsingHistoryList className="mt-10" />
 				</section>
 			</div>
 		</Suspense>

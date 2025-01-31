@@ -8,6 +8,7 @@ import { HomeCarousel } from "@/components/shared/home/home-carousel";
 import { Card, CardContent } from "./ui/card";
 import ProductSlider from "./product/product-slider";
 import { IProduct } from "@/lib/db/models/product.model";
+import BrowsingHistoryList from "./shared/browsing-history-list";
 // import { getProductsByTag } from "@/lib/actions/product.action";
 
 gsap.registerPlugin(ScrollTrigger);
@@ -111,6 +112,9 @@ export default function AnimatedHomePage({
 					/>
 				</CardContent>
 			</Card>
+			<div className="p-4 bg-background">
+				<BrowsingHistoryList />
+			</div>
 		</div>
 	);
 }
