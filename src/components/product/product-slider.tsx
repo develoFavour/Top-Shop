@@ -1,6 +1,4 @@
 "use client";
-
-import * as React from "react";
 import {
 	Carousel,
 	CarouselContent,
@@ -9,20 +7,26 @@ import {
 	CarouselPrevious,
 } from "@/components/ui/carousel";
 import ProductCard from "./product-card";
-import { IProduct } from "@/lib/db/models/product.model";
+import type { IProduct } from "@/lib/db/models/product.model";
+
+interface ProductSliderProps {
+	title?: string;
+	products: IProduct[];
+	hideDetails?: boolean;
+}
 
 export default function ProductSlider({
 	title,
 	products,
 	hideDetails = false,
-}: {
-	title?: string;
-	products: IProduct[];
-	hideDetails?: boolean;
-}) {
+}: ProductSliderProps) {
+	if (products.length === 0) {
+		return null;
+	}
+
 	return (
 		<div className="w-full bg-background">
-			<h2 className="h2-bold mb-5">{title}</h2>
+			{title && <h2 className="h2-bold mb-5">{title}</h2>}
 			<Carousel
 				opts={{
 					align: "start",
@@ -48,8 +52,12 @@ export default function ProductSlider({
 						</CarouselItem>
 					))}
 				</CarouselContent>
-				<CarouselPrevious className="left-0" />
-				<CarouselNext className="right-0" />
+				{products.length > 1 && (
+					<>
+						<CarouselPrevious className="left-0" />
+						<CarouselNext className="right-0" />
+					</>
+				)}
 			</Carousel>
 		</div>
 	);

@@ -13,9 +13,11 @@ import {
 	getRelatedProductsByCategory,
 } from "@/lib/actions/product.action";
 import { Badge } from "@/components/ui/badge";
-import { cn } from "@/lib/utils";
+import { cn, generateId, round2 } from "@/lib/utils";
 import ProductDetailsLoading from "./loading";
 import BrowsingHistoryList from "@/components/shared/browsing-history-list";
+import AddToCart from "@/components/shared/product/add-to-cart";
+import ProductDetailsWrapper from "@/components/product/productDetailWrapper";
 
 export async function generateMetadata(props: {
 	params: Promise<{ slug: string }>;
@@ -50,114 +52,135 @@ export default async function ProductDetails(props: {
 	});
 
 	return (
-		<Suspense fallback={<ProductDetailsLoading />}>
-			<div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-8">
-				<section className="bg-white rounded-lg shadow-sm">
-					<div className="grid grid-cols-1 lg:grid-cols-5 gap-4 lg:gap-8">
-						{/* Product Gallery - Full width on mobile, 2 columns on desktop */}
-						<div className="w-full lg:col-span-2 p-4">
-							<ProductGallery images={product.images} />
-						</div>
+		<ProductDetailsWrapper product={product}>
+			<Suspense fallback={<ProductDetailsLoading />}>
+				<div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-8">
+					<section className="bg-white rounded-lg shadow-sm">
+						<div className="grid grid-cols-1 lg:grid-cols-5 gap-4 lg:gap-8">
+							{/* Product Gallery - Full width on mobile, 2 columns on desktop */}
+							<div className="w-full lg:col-span-2 p-4">
+								<ProductGallery images={product.images} />
+							</div>
 
-						{/* Product Information */}
-						<div className="w-full lg:col-span-2 p-4 lg:p-6 space-y-6">
-							<div className="space-y-4">
-								<div className="flex flex-wrap gap-2">
-									<Badge variant="secondary" className="text-xs sm:text-sm">
-										{product.brand}
-									</Badge>
-									<Badge variant="outline" className="text-xs sm:text-sm">
-										{product.category}
-									</Badge>
-									{product.tags.map((tag) => (
-										<Badge
-											key={tag}
-											variant="secondary"
-											className={cn(
-												"text-xs sm:text-sm",
-												tag === "todays-deal" && "bg-red-100 text-red-800"
-											)}
-										>
-											{tag}
+							{/* Product Information */}
+							<div className="w-full lg:col-span-2 p-4 lg:p-6 space-y-6">
+								<div className="space-y-4">
+									<div className="flex flex-wrap gap-2">
+										<Badge variant="secondary" className="text-xs sm:text-sm">
+											{product.brand}
 										</Badge>
-									))}
+										<Badge variant="outline" className="text-xs sm:text-sm">
+											{product.category}
+										</Badge>
+										{product.tags.map((tag) => (
+											<Badge
+												key={tag}
+												variant="secondary"
+												className={cn(
+													"text-xs sm:text-sm",
+													tag === "todays-deal" && "bg-red-100 text-red-800"
+												)}
+											>
+												{tag}
+											</Badge>
+										))}
+									</div>
+
+									<h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900">
+										{product.name}
+									</h1>
+
+									<div className="flex items-center gap-2">
+										<Rating rating={product.avgRating} showNumber size={4} />
+										<span className="text-sm text-gray-500">
+											({product.numReviews} reviews)
+										</span>
+									</div>
+
+									<Separator />
+
+									<ProductPrice
+										price={product.price}
+										listPrice={product.listPrice}
+										isDeal={product.tags.includes("todays-deal")}
+										forListing={false}
+										className="text-xl sm:text-2xl"
+									/>
 								</div>
 
-								<h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900">
-									{product.name}
-								</h1>
-
-								<div className="flex items-center gap-2">
-									<Rating rating={product.avgRating} showNumber size={4} />
-									<span className="text-sm text-gray-500">
-										({product.numReviews} reviews)
-									</span>
-								</div>
+								<SelectVariant
+									product={product}
+									size={size || product.sizes[0]}
+									color={color || product.colors[0]}
+								/>
 
 								<Separator />
 
-								<ProductPrice
-									price={product.price}
-									listPrice={product.listPrice}
-									isDeal={product.tags.includes("todays-deal")}
-									forListing={false}
-									className="text-xl sm:text-2xl"
-								/>
+								<ProductInfo description={product.description} />
 							</div>
 
-							<SelectVariant
-								product={product}
-								size={size || product.sizes[0]}
-								color={color || product.colors[0]}
-							/>
+							{/* Purchase Card */}
+							<div className="w-full lg:col-span-1 p-4">
+								<Card className="sticky top-4">
+									<CardContent className="p-4 space-y-4">
+										<ProductPrice price={product.price} className="text-2xl" />
 
-							<Separator />
-
-							<ProductInfo description={product.description} />
-						</div>
-
-						{/* Purchase Card */}
-						<div className="w-full lg:col-span-1 p-4">
-							<Card className="sticky top-4">
-								<CardContent className="p-4 space-y-4">
-									<ProductPrice price={product.price} className="text-2xl" />
-
-									<div className="space-y-2">
-										{product.countInStock > 0 ? (
-											<>
-												<div className="text-green-700 flex items-center gap-2">
-													<div className="w-2 h-2 rounded-full bg-green-700" />
-													<span>In Stock</span>
+										<div className="space-y-2">
+											{product.countInStock > 0 ? (
+												<>
+													<div className="text-green-700 flex items-center gap-2">
+														<div className="w-2 h-2 rounded-full bg-green-700" />
+														<span>In Stock</span>
+													</div>
+													{product.countInStock <= 3 && (
+														<p className="text-red-600 text-sm font-medium">
+															Only {product.countInStock} left - order soon
+														</p>
+													)}
+												</>
+											) : (
+												<div className="text-red-600 flex items-center gap-2">
+													<div className="w-2 h-2 rounded-full bg-red-600" />
+													<span>Out of Stock</span>
 												</div>
-												{product.countInStock <= 3 && (
-													<p className="text-red-600 text-sm font-medium">
-														Only {product.countInStock} left - order soon
-													</p>
-												)}
-											</>
-										) : (
-											<div className="text-red-600 flex items-center gap-2">
-												<div className="w-2 h-2 rounded-full bg-red-600" />
-												<span>Out of Stock</span>
-											</div>
-										)}
+											)}
+										</div>
+									</CardContent>
+								</Card>
+								{product.countInStock !== 0 && (
+									<div className="flex justify-center items-center">
+										<AddToCart
+											item={{
+												clientId: generateId(),
+												product: product._id,
+												countInStock: product.countInStock,
+												name: product.name,
+												slug: product.slug,
+												category: product.category,
+												price: round2(product.price),
+												quantity: 1,
+												image: product.images[0],
+												size: size || product.sizes[0],
+												color: color || product.colors[0],
+											}}
+										/>
 									</div>
-								</CardContent>
-							</Card>
+								)}
+							</div>
 						</div>
-					</div>
-				</section>
+					</section>
 
-				<section className="mt-8">
-					<ProductSlider
-						products={relatedProducts.data}
-						title={`Best Sellers in ${product.category}`}
-					/>
-				</section>
-				<section>
-					<BrowsingHistoryList className="mt-10" />
-				</section>
-			</div>
-		</Suspense>
+					<section className="mt-8">
+						<ProductSlider
+							products={relatedProducts.data}
+							title={`Best Sellers in ${product.category}`}
+						/>
+					</section>
+					<section>
+						<BrowsingHistoryList className="mt-10" />
+					</section>
+				</div>
+			</Suspense>
+		</ProductDetailsWrapper>
 	);
 }

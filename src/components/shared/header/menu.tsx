@@ -1,9 +1,10 @@
 "use client";
 
-import { ShoppingCartIcon, UserIcon } from "lucide-react";
+import { UserIcon } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useRef } from "react";
 import gsap from "gsap";
+import CartButton from "./cart-button";
 
 export default function Menu() {
 	const cartCountRef = useRef(null);
@@ -32,26 +33,8 @@ export default function Menu() {
 			>
 				<UserIcon className="h-5 w-5" />
 			</Link>
-			<Link
-				href="/cart"
-				className="header-button relative group ml-1 sm:ml-2"
-				aria-label="Cart"
-			>
-				<div className="flex items-center">
-					<div className="relative">
-						<ShoppingCartIcon className="h-5 w-5 sm:h-6 sm:w-6" />
-						<span
-							ref={cartCountRef}
-							className="absolute -top-1 -right-1 bg-primary text-white text-[10px] sm:text-xs rounded-full w-3 h-3 sm:w-4 sm:h-4 flex items-center justify-center"
-						>
-							0
-						</span>
-					</div>
-					<span className="text-xs sm:text-sm font-medium hidden sm:inline ml-1">
-						Cart
-					</span>
-				</div>
-			</Link>
+
+			<CartButton />
 		</nav>
 	);
 }
