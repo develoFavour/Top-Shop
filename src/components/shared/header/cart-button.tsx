@@ -7,9 +7,11 @@ import { cn } from "@/lib/utils";
 import useCartStore from "@/hooks/use-cart-store";
 import { useRef, useEffect } from "react";
 import gsap from "gsap";
+import useCartSidebar from "@/hooks/use-cart-sidebar";
 
 export default function CartButton() {
 	const isMounted = useIsMounted();
+	const isCartSidebarOpen = useCartSidebar();
 	const {
 		cart: { items },
 	} = useCartStore();
@@ -50,6 +52,11 @@ export default function CartButton() {
 				<span className="text-xs sm:text-sm font-medium hidden sm:inline ml-1">
 					Cart
 				</span>
+				{isCartSidebarOpen && (
+					<div
+						className={`absolute top-[20px] right-[-16px] rotate-[-90deg] z-10 w-0 h-0 border-l-[7px] border-r-[7px] border-b-[8px] border-transparent border-b-background`}
+					></div>
+				)}
 			</div>
 		</Link>
 	);
